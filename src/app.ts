@@ -25,6 +25,10 @@ class App {
     }
 
     public listen() {
+        const jsonErrorHandler = async (err: any, req: any, res: any, next: any) => {
+            res.status(500).send({ error: err });
+        };
+        this.app.use(jsonErrorHandler);
         this.app.listen(this.port, () => {
             console.log(`App listening on the http://localhost:${this.port}`)
         })
