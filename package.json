@@ -1,5 +1,5 @@
 {
-  "name": "heroku",
+  "name": "heroku functions",
   "scripts": {
     "lint": "tslint --project tsconfig.json",
     "build": "tsc",
