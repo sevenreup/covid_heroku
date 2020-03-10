@@ -3,6 +3,7 @@
   "scripts": {
     "lint": "tslint --project tsconfig.json",
     "start": "node lib/server.js",
+    "build": "tsc",
     "start:dev": "nodemon lib/server.js",
     "build:dev": "tsc --watch --preserveWatchOutput",
     "dev": "concurrently \"npm:build:dev\" \"npm:start:dev\""
