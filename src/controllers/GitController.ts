@@ -14,23 +14,18 @@ export class GitController implements IControllerBase {
         this.initRoutes();
     }
     initRoutes() {
-        this.router.get('/', this.index);
         this.router.get('/category', this.category);
         this.router.get('/all', this.all);
     }
 
-    private index = async (req: Request, res: Response) => {
-        res.send("worked");
-    }
-
     private all = async (req: Request, res: Response) => {
-        const data: alldta = { Confirmed: null, Deaths: null, Recovered: null };
-        await this.getCategory(this.cat.conf).toPromise().then(async (value1: any) => {
-            data.Confirmed = value1;
-            await this.getCategory(this.cat.rec).toPromise().then(async (value2: any) => {
-                data.Recovered = value2;
-                await this.getCategory(this.cat.dd).toPromise().then((value3: any) => {
-                    data.Deaths = value3;
+        let data: alldta = { Confirmed: null, Deaths: null, Recovered: null };
+        await this.getCategory(this.cat.conf).toPromise().then(async (value) => {
+            data.Confirmed = value;
+            await this.getCategory(this.cat.rec).toPromise().then(async (value) => {
+                data.Recovered = value;
+                await this.getCategory(this.cat.dd).toPromise().then((value) => {
+                    data.Deaths = value;
                 });
             });
         });
@@ -39,7 +34,7 @@ export class GitController implements IControllerBase {
 
     private category = async (req: Request, res: Response) => {
         const category = req.query.name;
-        this.getCategory(category).subscribe((data: any) => {
+        this.getCategory(category).subscribe((data) => {
             res.send(data);
         });
         return;

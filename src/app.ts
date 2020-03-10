@@ -1,8 +1,4 @@
-import express, { Application, Request, Response } from 'express';
-import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
-import morgan from 'morgan';
-// import http from 'http';
+import express, { Application } from 'express';
 
 class App {
     public app: Application;
@@ -12,8 +8,6 @@ class App {
         this.app = express();
         this.port = appInt.port;
 
-        admin.initializeApp(functions.config().firebase);
-        this.logger();
         this.middleware(appInt.middleWares);
         this.routes(appInt.controllers);
     }
@@ -29,16 +23,11 @@ class App {
             this.app.use('/', controller.router)
         })
     }
-    private logger(): void {
-        this.app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
-    }
+
     public listen() {
-        this.app.use(function (req: Request, res: Response, next) {
-            res.header("Access-Control-Allow-Origin", "*");
-            res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-            next();
-        });
-        return functions.https.onRequest(this.app);
+        this.app.listen(this.port, () => {
+            console.log(`App listening on the http://localhost:${this.port}`)
+        })
     }
 }
 
