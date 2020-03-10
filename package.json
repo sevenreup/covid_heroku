@@ -1,5 +1,5 @@
 {
-  "name": "heroku functions",
+  "name": "convid_way",
   "scripts": {
     "lint": "tslint --project tsconfig.json",
     "build": "tsc",
