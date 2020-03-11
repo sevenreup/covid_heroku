@@ -1,13 +1,14 @@
 import App from './app'
 
 import * as bodyParser from 'body-parser';
-import { gitController } from './controllers';
+import { gitController, tryCon } from './controllers';
 import { PORT } from './config/constants';
 
 const app = new App({
     port: PORT,
     controllers: [
-        gitController
+        gitController,
+        tryCon
     ],
     middleWares: [
         bodyParser.json(),
