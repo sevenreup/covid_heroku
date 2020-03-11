@@ -1,6 +1,6 @@
 // @ts-ignore
 import axios from 'axios';
-import prepareScrapedData from './unknown/china';
+// import prepareScrapedData from './unknown/china';
 import dayjs from 'dayjs';
 import { csvParse, DSVRowString } from 'd3-dsv';
 // import mergeAll from './unknown/mergeData';
@@ -11,11 +11,11 @@ class Downloader {
     public async fetchData() {
         console.log('ded');
 
-        const [conf_req, rec_req, dea_req, china_req] = await Promise.all([
+        const [conf_req, rec_req, dea_req /** , china_req */] = await Promise.all([
             axios.get(`https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-${this.sheets[0]}.csv`),
             axios.get(`https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-${this.sheets[1]}.csv`),
             axios.get(`https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-${this.sheets[2]}.csv`),
-            axios.get(`https://ncov.dxy.cn/ncovh5/view/pneumonia`)
+            // axios.get(`https://ncov.dxy.cn/ncovh5/view/pneumonia`)
         ]);
 
         const con_raw = this.convertToCsv(conf_req.data);
