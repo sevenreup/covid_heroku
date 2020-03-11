@@ -21,7 +21,7 @@ class Downloader {
         const con_raw = this.convertToCsv(conf_req.data);
         const rec_raw = this.convertToCsv(rec_req.data);
         const dea_raw = this.convertToCsv(dea_req.data);
-        const china_raw = prepareScrapedData(china_req.data)
+        // const china_raw = prepareScrapedData(china_req.data)
 
         // @ts-ignore
         const [headers_dates_raw, headers_other] = con_raw.columns.reduce((acc: any, cur: any, i: any) => {
