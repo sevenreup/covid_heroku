@@ -3,7 +3,7 @@ import axios from 'axios';
 import prepareScrapedData from './unknown/china';
 import dayjs from 'dayjs';
 import { csvParse, DSVRowString } from 'd3-dsv';
-import mergeAll from './unknown/mergeData';
+// import mergeAll from './unknown/mergeData';
 
 
 class Downloader {
@@ -112,7 +112,7 @@ class Downloader {
             }
         });
 
-        const mergeData = [dateHeaders, fulldata, china_raw];
+        // const mergeData = [dateHeaders, fulldata, china_raw];
 
         const geojson = {
             type: "FeatureCollection",
