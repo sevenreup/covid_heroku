@@ -139,7 +139,6 @@ class Downloader {
 
         return geojson;
     }
-
     private convertToCsv(data: string) {
         // const substitutes = {
         //     "2": "\"first_recorded\"",
