@@ -4,7 +4,7 @@ import Try from '../api/Downloader';
 
 export class TryController implements IControllerBase {
 
-    public path = '/try';
+    public path = '/all';
     public router = express.Router();
     private try = new Try();
 

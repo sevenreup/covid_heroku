@@ -6,7 +6,7 @@ import { Observable, throwError } from 'rxjs';
 interface alldta { Confirmed: any, Deaths: any, Recovered: any }
 export class GitController implements IControllerBase {
 
-    public path = '/';
+    public path = '/dep';
     public router = express.Router();
     private cat = { conf: 'Confirmed', dd: 'Deaths', rec: 'Recovered' }
 
@@ -14,8 +14,13 @@ export class GitController implements IControllerBase {
         this.initRoutes();
     }
     initRoutes() {
-        this.router.get('/category', this.category);
-        this.router.get('/all', this.all);
+        this.router.get('/', this.info);
+        this.router.get(this.path + '/category', this.category);
+        this.router.get(this.path + '/all', this.all);
+    }
+    private info = (req: Request, res: Response) => {
+        res.send("Routes have been changed<br> <b>all: </b> returns the geojson data <br>" + 
+        "<h3>old routes</h3> these have been moved to the <b>/dep</b> route <br> /dep/all <br> /dep/category");
     }
 
     private all = async (req: Request, res: Response) => {

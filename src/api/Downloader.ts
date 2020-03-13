@@ -87,14 +87,15 @@ class Downloader {
                 return previous
             }, {});
         });
-
+        var num = 0;
         const fulldata = confirmed.map(d => {
             // @ts-ignore
-            const extraConfirmed = this.getExtraData("", d, null, dateHeaders);
-            const extraRecovered = this.getExtraData("recoveries_", d, recovered, dateHeaders);
-            const extraDeath = this.getExtraData("deaths_", d, death, dateHeaders);
+            const extraConfirmed = this.getExtraData("confirmed", d, null, dateHeaders);
+            const extraRecovered = this.getExtraData("recoveries", d, recovered, dateHeaders);
+            const extraDeath = this.getExtraData("deaths", d, death, dateHeaders);
 
-            
+            console.log(num++);
+
             return {
                 // @ts-ignore
                 pronvincestate: d['Province/State'],
@@ -104,7 +105,7 @@ class Downloader {
                 lat: d["Lat"],
                 // @ts-ignore
                 long: d['Long'],
-                headers: dateHeaders.join(";;"),
+                headers: dateHeaders,
                 ...extraConfirmed,
                 ...extraRecovered,
                 ...extraDeath
@@ -117,25 +118,24 @@ class Downloader {
         const geojson = {
             type: "FeatureCollection",
             features: fulldata.map(properties => {
-      
-              const keys = Object.keys(properties)
-              const newProps = keys.reduce((acc, cur) => {
-                // @ts-ignore
-                acc[cur.toLowerCase()] = properties[cur]
-                return acc
-              }, {})
-            //   console.log(properties);
-              
-              return {
-                type: "Feature",
-                geometry: {
-                  type: "Point",
-                  coordinates: [parseFloat(properties.long), parseFloat(properties.lat)],
-                },
-                properties: newProps,
-              }
+
+                const keys = Object.keys(properties)
+                const newProps = keys.reduce((acc, cur) => {
+                    // @ts-ignore
+                    acc[cur.toLowerCase()] = properties[cur]
+                    return acc
+                }, {})
+
+                return {
+                    type: "Feature",
+                    geometry: {
+                        type: "Point",
+                        coordinates: [parseFloat(properties.long), parseFloat(properties.lat)],
+                    },
+                    properties: newProps,
+                }
             }),
-          }
+        }
 
         return geojson;
     }
@@ -152,7 +152,6 @@ class Downloader {
         //     return substitutes[i] ? substitutes[i] : d
         // }).join(",")
         const headers = rows[0].split(",").join(",")
-        console.log(headers + '\n');
 
         const raw = headers + "\n" + rows.slice(1).join("\n")
         const parsed = csvParse(raw)
@@ -160,19 +159,26 @@ class Downloader {
         return parsed
     }
     private getExtraData(prefix = "", referenceSheet: {}, sheet: {}[], dateHeaders: any) {
+
         const relevant = sheet
             ?
             // @ts-ignore
             sheet.find(s => (s["Province/State"] === referenceSheet["Province/State"]) && (s["Country/Region"] === referenceSheet["Country/Region"]))
             : referenceSheet;
+        var json: any = []
         // @ts-ignore
-        return dateHeaders.reduce((acc, cur) => {
+        var data = dateHeaders.reduce((acc, cur) => {
             // @ts-ignore
             if (!relevant[cur]) return acc
             // @ts-ignore
-            acc[prefix + cur] = parseInt(relevant[cur])
+            json.push({ date: cur, number: relevant[cur] });
             return acc
         }, {})
+        data[prefix] = json;
+        console.log(prefix + "");
+
+        console.log(json);
+        return data;
     }
 }
 
