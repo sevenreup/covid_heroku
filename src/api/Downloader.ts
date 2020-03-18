@@ -112,9 +112,29 @@ class Downloader {
 
             }
         });
-
-        // const mergeData = [dateHeaders, fulldata, china_raw];
-
+        const confirmedfull = confirmed.map(d => {
+            // @ts-ignore
+            // @ts-ignore
+            const extraConfirmed = this.getExtraData("confirmed", d, null, dateHeaders);
+            return {
+                type: "Feature",
+                // @ts-ignore
+                id: d["Country/Region"],
+                geometry: {
+                    type: "Point",
+                    // @ts-ignore
+                    coordinates: [parseFloat(d["Lat"]), parseFloat(d['Long'])],
+                },
+                properties: {
+                    // @ts-ignore
+                    pronvincestate: d['Province/State'],
+                    // @ts-ignore
+                    countryregion: d["Country/Region"],
+                    headers: dateHeaders,
+                    ...extraConfirmed,
+                },
+            }
+        });
         const geojson = {
             type: "FeatureCollection",
             features: fulldata.map(properties => {
@@ -137,7 +157,7 @@ class Downloader {
             }),
         }
 
-        return geojson;
+        return confirmedfull;
     }
     private convertToCsv(data: string) {
         // const substitutes = {

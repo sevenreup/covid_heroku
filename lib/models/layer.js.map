@@ -1,0 +1,1 @@
+{"version":3,"file":"layer.js","sourceRoot":"","sources":["../../src/models/layer.ts"],"names":[],"mappings":";;AAAA,MAAqB,KAAK;IAKtB,YAAY,EAAU,EAAE,KAAa,EAAE,IAAY;QAC/C,IAAI,CAAC,EAAE,GAAG,EAAE,CAAC;QACb,IAAI,CAAC,KAAK,GAAG,KAAK,CAAC;QACnB,IAAI,CAAC,IAAI,GAAG,IAAI,CAAC;IACrB,CAAC;CACJ;AAVD,wBAUC"}
