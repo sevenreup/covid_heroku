@@ -28,6 +28,8 @@ export class Covid19 implements IControllerBase {
     }
     private  initData = async () => {
         const countries = await Cacher.createCountryIndexes();
+        console.log('here');
+        
         const { status, data } = await getAllData();
         if (status === 200 && data) {
             const { confirmed, deaths, latest, recovered } = data;

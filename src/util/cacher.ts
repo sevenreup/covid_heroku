@@ -98,6 +98,6 @@ export default class Cacher {
         return JSON.parse(file);
     }
     public static async writeLayers(filename: string, data: any) {
-        fs.outputFile(path.resolve(__dirname + '../cache/layers' + filename), JSON.stringify(data, null, 2));
+        fs.outputFile(path.resolve(__dirname, '../cache/layers', filename), JSON.stringify(data, null, 2));
     }
 }
