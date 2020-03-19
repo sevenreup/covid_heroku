@@ -27,8 +27,9 @@ export class Covid19 implements IControllerBase {
             res.status(500).send("server issues");
         }
     }
-    private getLayers = (req: Request, res: Response) => {
-
+    private getLayers = async (req: Request, res: Response) => {
+        const response = await Cacher.getLayers();
+        res.send(response);
     }
     private initData = async () => {
         const countries = await Cacher.createCountryIndexes();

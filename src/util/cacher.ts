@@ -100,4 +100,16 @@ export default class Cacher {
     public static async writeLayers(filename: string, data: any) {
         fs.outputFile(path.resolve(__dirname, '../cache/layers', filename), JSON.stringify(data, null, 2));
     }
+    public static async getLayers() {
+        const filename = path.resolve(__dirname, '../cache/layers', 'layers.json');
+        let layers = null;
+        try {
+            layers = await fs.readJson(filename);
+        } catch (error) {
+            const response = await axios.get('https://coronavirus-tracker-api.herokuapp.com/v2/latest');
+            layers = response.data;
+            this.writeLayers('layers.json', layers);
+        }
+        return layers;
+    }
 }
