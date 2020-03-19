@@ -13,8 +13,11 @@ export class Covid19 implements IControllerBase {
     }
     initRoutes() {
         this.router.get('/dev/all', this.generateAll);
+        this.router.get('/dev/cr', this.countries)
     }
-
+    private countries = async (req: Request, res: Response) => {
+        res.send(await Cacher.createCountryIndexes());
+    }
     private generateAll = async (req: Request, res: Response) => {
         const countries = Cacher.createCountryIndexes();
         const { status, data } = await getAllData();
@@ -51,15 +54,16 @@ export class Covid19 implements IControllerBase {
                     acc[item.country_code] = item.data;
                 }
             }, {});
-            const mapped = Object.keys(countries).map(country_code => {
-                return {
-                    ...countries[country_code],
-                    properties: {
-                        ...countries[country_code].properties,
-                        data: countryData[country_code] || { confirmed, 0, deaths: 0, recovered: 0 }
-                    }
-                }
-            });
+
+            // const mapped = Object.keys(countries).map(country_code => {
+            //     return {
+            //         ...countries[country_code],
+            //         properties: {
+            //             ...countries[country_code].properties,
+            //             data: countryData[country_code] || { confirmed, 0, deaths: 0, recovered: 0 }
+            //         }
+            //     }
+            // });
             res.send(all);
         }
         console.log(status);
