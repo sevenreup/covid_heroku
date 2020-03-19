@@ -16,8 +16,7 @@ export class Covid19 implements IControllerBase {
     }
 
     private generateAll = async (req: Request, res: Response) => {
-        console.log('here');
-
+        const countries = Cacher.createCountryIndexes();
         const { status, data } = await getAllData();
         if (status === 200 && data) {
             const { confirmed, deaths, latest, recovered } = data;
@@ -41,7 +40,26 @@ export class Covid19 implements IControllerBase {
                     }
                 }
             });
-            Cacher.writedata('layers/mapdata.json', all);
+            // Cacher.writedata('layers/mapdata.json', all);
+            // @ts-ignore
+            const countryData = all.reduce((acc: any, item: any) => {
+                if (acc[item.country_code]) {
+                    acc[item.country_code].confirmed += item.data.confirmed;
+                    acc[item.country_code].deaths += item.data.deaths;
+                    acc[item.country_code].recovered += item.data.recovered;
+                } else {
+                    acc[item.country_code] = item.data;
+                }
+            }, {});
+            const mapped = Object.keys(countries).map(country_code => {
+                return {
+                    ...countries[country_code],
+                    properties: {
+                        ...countries[country_code].properties,
+                        data: countryData[country_code] || { confirmed, 0, deaths: 0, recovered: 0 }
+                    }
+                }
+            });
             res.send(all);
         }
         console.log(status);

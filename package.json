@@ -5,7 +5,7 @@
     "start": "node lib/server.js",
     "build": "tsc",
     "start:dev": "nodemon lib/server.js",
-    "build:dev": "concurrently \"tsc --watch --preserveWatchOutput\" \"copyfiles -u 2 -V src/cache/** lib/cache\"",
+    "build:dev": "concurrently \"tsc --watch --preserveWatchOutput\" \"copyfiles -u 1 -V src/cache/** lib\"",
     "dev": "concurrently \"npm:build:dev\" \"npm:start:dev\""
   },
   "engines": {

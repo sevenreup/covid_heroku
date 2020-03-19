@@ -6,4 +6,8 @@ export default class Cacher {
         fs.outputFile(path.resolve(__dirname, '../cache/data', file), JSON.stringify(jsonOBJ, null, 2))
             .catch(error => console.log(error));
     }
+
+    public static createCountryIndexes() {
+        
+    }
 }
