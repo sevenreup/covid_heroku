@@ -38,7 +38,7 @@ export class Covid19 implements IControllerBase {
         const { status, data } = await getAllData();
         if (status === 200 && data) {
             console.log('loadeed');
-            
+
             const { confirmed, deaths, latest, recovered } = data;
             this.generateLayer(latest);
             const conf_indexed = await this.convertArrayToObject(confirmed.locations, ["country_code", "countryregion"]);
@@ -85,9 +85,9 @@ export class Covid19 implements IControllerBase {
                     }
                 }
             });
-
-            Cacher.writeLayers('geo.json', mapped);
-            return mapped;
+            const mappedComplete = { type: "FeatureCollection", features: mapped }
+            Cacher.writeLayers('geo.json', mappedComplete);
+            return mappedComplete;
         } else {
             console.log(status);
             return { status, error: 'cant contact data' }
