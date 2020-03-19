@@ -1,7 +1,6 @@
 
-# Welcome to pure Nut
+# Welcome
 
-![enter image description here](https://i.kym-cdn.com/photos/images/newsfeed/001/502/406/e16)
 
 So I am stealing this data from some Hopkins guys repo and stuff.
 
