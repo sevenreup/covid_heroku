@@ -19,7 +19,15 @@ export class Covid19 implements IControllerBase {
         res.send(await Cacher.createCountryIndexes());
     }
     private generateAll = async (req: Request, res: Response) => {
-        const countries = Cacher.createCountryIndexes();
+        try {
+            const data = await this.initData();
+            res.send(data);
+        } catch (error) {
+            res.status(500).send("server issues");
+        }
+    }
+    private  initData = async () => {
+        const countries = await Cacher.createCountryIndexes();
         const { status, data } = await getAllData();
         if (status === 200 && data) {
             const { confirmed, deaths, latest, recovered } = data;
@@ -44,29 +52,38 @@ export class Covid19 implements IControllerBase {
                 }
             });
             // Cacher.writedata('layers/mapdata.json', all);
-            // @ts-ignore
-            const countryData = all.reduce((acc: any, item: any) => {
-                if (acc[item.country_code]) {
-                    acc[item.country_code].confirmed += item.data.confirmed;
-                    acc[item.country_code].deaths += item.data.deaths;
-                    acc[item.country_code].recovered += item.data.recovered;
-                } else {
-                    acc[item.country_code] = item.data;
-                }
-            }, {});
+            console.log('before');
 
-            // const mapped = Object.keys(countries).map(country_code => {
-            //     return {
-            //         ...countries[country_code],
-            //         properties: {
-            //             ...countries[country_code].properties,
-            //             data: countryData[country_code] || { confirmed, 0, deaths: 0, recovered: 0 }
-            //         }
-            //     }
-            // });
-            res.send(all);
+            // @ts-ignore
+            const countryData = all.reduce((result: any, item: any) => {
+                if (result[item.country_code]) {
+                    result[item.country_code].confirmed += item.data.confirmed;
+                    result[item.country_code].deaths += item.data.deaths;
+                    result[item.country_code].recovered += item.data.recovered;
+                } else {
+                    result[item.country_code] = item.data;
+                };
+                return result;
+            }, {})
+            console.log(countryData);
+
+            const mapped = Object.keys(countries).map(country_code => {
+                return {
+                    ...countries[country_code],
+                    alpha2: country_code,
+                    properties: {
+                        ...countries[country_code].properties,
+                        data: countryData[country_code] || { confirmed: 0, deaths: 0, recovered: 0 }
+                    }
+                }
+            });
+
+            Cacher.writeLayers('geo.json', mapped);
+            return mapped;
+        } else {
+            console.log(status);
+            return { status, error: 'cant contact data'}
         }
-        console.log(status);
 
     }
 

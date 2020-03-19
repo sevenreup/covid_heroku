@@ -4,12 +4,54 @@ import axios from 'axios';
 import { csvParse, DSVRowString } from 'd3-dsv';
 
 export default class Cacher {
+    private static IndexedCountPath = path.resolve(__dirname, '../cache/data', 'indexed_countries.json');
     public static writedata(file: string, jsonOBJ: Object) {
         fs.outputFile(path.resolve(__dirname, '../cache/data', file), JSON.stringify(jsonOBJ, null, 2))
             .catch(error => console.log(error));
     }
     public static async createCountryIndexes() {
-        return await this.initCCode();
+        let countries_index;
+
+        try {
+            countries_index = await fs.readJson(this.IndexedCountPath);
+        } catch (error) {
+            console.log(error);
+            countries_index = await this.getCountryIndex();
+        }
+        return countries_index;
+    }
+    private static async getCountryIndex() {
+        const countryCodes = await this.initCCode();
+        const countries = await this.getCountries();
+
+        const indexesCode = countryCodes.reduce((result: any, item: any) => {
+            return Object.assign(result, {
+                [item["alpha_3"]]: {
+                    alpha2: item["alpha_2"]
+                }
+            });
+        }, {});
+        console.log(indexesCode);
+
+        const indexesCount = countries.features.reduce((result: any, item: any) => {
+            // console.log(item);
+
+            if (indexesCode[item.id]) {
+                let index = indexesCode[item.id].alpha2;
+                return Object.assign(result, {
+                    [index]: {
+                        ...item
+                    }
+                });
+            } else {
+                console.log('ass');
+                return result;
+            }
+        }, {});
+
+        await fs.outputFile(this.IndexedCountPath, JSON.stringify(indexesCount, null, 2));
+
+        return indexesCount;
     }
     public static async initCCode() {
         const filename = path.resolve(__dirname, '../cache/data', 'countries_code.json');
@@ -23,13 +65,12 @@ export default class Cacher {
             console.log(error);
             const data = await this.getCCode();
             console.log(data);
-            fs.outputFile(filename, JSON.stringify(data))
+            fs.outputFile(filename, JSON.stringify(data, null, 2))
             codes = data;
         }
         console.log(codes);
         return codes;
     }
-
     private static async getCCode() {
         const response = await axios.get('https://raw.githubusercontent.com/datasets/country-codes/master/data/country-codes.csv');
         let data = csvParse(response.data);
@@ -51,5 +92,12 @@ export default class Cacher {
         console.log(all);
 
         return all;
+    }
+    public static async getCountries() {
+        const file = await fs.readFileSync(path.resolve(__dirname, '../cache/data', 'countries.geo.json')).toString();
+        return JSON.parse(file);
+    }
+    public static async writeLayers(filename: string, data: any) {
+        fs.outputFile(path.resolve(__dirname + '../cache/layers' + filename), JSON.stringify(data, null, 2));
     }
 }
