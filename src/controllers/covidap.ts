@@ -12,8 +12,9 @@ export class Covid19 implements IControllerBase {
         this.initRoutes();
     }
     initRoutes() {
-        this.router.get('/dev/all', this.generateAll);
-        this.router.get('/dev/cr', this.countries)
+        this.router.get('/all', this.generateAll);
+        this.router.get('/cr', this.countries)
+        this.router.get('/layers', this.getLayers);
     }
     private countries = async (req: Request, res: Response) => {
         res.send(await Cacher.createCountryIndexes());
@@ -26,14 +27,19 @@ export class Covid19 implements IControllerBase {
             res.status(500).send("server issues");
         }
     }
-    private  initData = async () => {
+    private getLayers = (req: Request, res: Response) => {
+
+    }
+    private initData = async () => {
         const countries = await Cacher.createCountryIndexes();
         console.log('here');
-        
+
         const { status, data } = await getAllData();
         if (status === 200 && data) {
+            console.log('loadeed');
+            
             const { confirmed, deaths, latest, recovered } = data;
-            // this.generateLayer(latest);
+            this.generateLayer(latest);
             const conf_indexed = await this.convertArrayToObject(confirmed.locations, ["country_code", "countryregion"]);
             const dea_indexed = await this.convertArrayToObject(deaths.locations, ["country_code", "countryregion"]);
             const rec_indexed = await this.convertArrayToObject(recovered.locations, ["country_code", "countryregion"]);
@@ -53,9 +59,8 @@ export class Covid19 implements IControllerBase {
                     }
                 }
             });
-            // Cacher.writedata('layers/mapdata.json', all);
+            Cacher.writeLayers('mapdata.json', all);
             console.log('before');
-
             // @ts-ignore
             const countryData = all.reduce((result: any, item: any) => {
                 if (result[item.country_code]) {
@@ -84,11 +89,10 @@ export class Covid19 implements IControllerBase {
             return mapped;
         } else {
             console.log(status);
-            return { status, error: 'cant contact data'}
+            return { status, error: 'cant contact data' }
         }
 
     }
-
     private generateLayer(layers: object) {
         const data = Object.keys(layers).map((id: string) => {
             console.log(id);
@@ -96,9 +100,8 @@ export class Covid19 implements IControllerBase {
             return new Layers(id, layers[id], id);
         });
 
-        Cacher.writedata('layers/layers.json', data);
+        Cacher.writeLayers('layers.json', data);
     }
-
     private async convertArrayToObject(data: any, keys: any[]) {
         return data.reduce((obj: any, item: any) => {
             const hashKey = keys.map(key => item[key] || '').join('_');

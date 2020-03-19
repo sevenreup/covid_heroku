@@ -17,3 +17,7 @@ export const getDeaths = () => {
 export const getRecovered = () => {
     return request.get(`/recovered`);
 }
+
+export const getLatest = () => {
+    return request.get('/v2/latest');
+}
