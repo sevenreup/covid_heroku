@@ -7,3 +7,8 @@ export const convertArrayToObject = (array: any, key: any) => {
         };
     }, initialValue);
 };
+
+export enum jsontypes {
+    geoGson,
+    scatter
+}
