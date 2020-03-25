@@ -3,6 +3,7 @@ import express, { Request, Response } from 'express';
 import Cacher from '../util/cacher';
 import { jsontypes } from '../util/util';
 import { processor } from '../api/processer';
+import { jhu } from '../api/jhu';
 
 export class Covid19 implements IControllerBase {
 
@@ -12,20 +13,25 @@ export class Covid19 implements IControllerBase {
     }
     initRoutes() {
         this.router.get('/all', this.generateAll);
-        this.router.get('/cr', this.countries)
         this.router.get('/layers', this.getLayers);
         this.router.get('/scatterplot', this.getScatter);
     }
-    private countries = async (req: Request, res: Response) => {
-        res.send(await Cacher.createCountryIndexes());
-    }
     private generateAll = async (req: Request, res: Response) => {
-        try {
-            const data = await processor.initData(jsontypes.geoGson);
+        let source = req.query.source;
+        console.log(source);
+
+        if (source === 'test') {
+            const data = await jhu.getGeoJson()
             res.send(data);
-        } catch (error) {
-            res.status(500).send("server issues");
+        } else {
+            try {
+                const data = await processor.initData(jsontypes.geoGson);
+                res.send(data);
+            } catch (error) {
+                res.status(500).send("server issues");
+            }
         }
+
     }
     private getLayers = async (req: Request, res: Response) => {
         const response = await Cacher.getLayers();
