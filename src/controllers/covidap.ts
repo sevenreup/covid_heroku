@@ -24,10 +24,14 @@ export class Covid19 implements IControllerBase {
             const data = await jhu.getGeoJson()
             res.send(data);
         } else {
+            console.log('here');
+
             try {
                 const data = await processor.initData(jsontypes.geoGson);
                 res.send(data);
             } catch (error) {
+                console.log(error);
+                
                 res.status(500).send("server issues");
             }
         }
