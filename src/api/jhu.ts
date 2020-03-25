@@ -1,6 +1,6 @@
 import { getAllData } from './enpoints/jhu.end';
-import Cacher from '../util/cacher';
-import crypto from 'crypto';
+// import Cacher from '../util/cacher';
+// import crypto from 'crypto';
 
 class JHU {
     public getall = async () => {
@@ -11,7 +11,7 @@ class JHU {
     }
 
     public getGeoJson = async () => {
-        const countries = await Cacher.createCountryIndexes();
+        // const countries = await Cacher.createCountryIndexes();
         const { status, data } = await getAllData();
         if (status === 200 && data) {
             const { locations } = data;
